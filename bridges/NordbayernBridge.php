@@ -104,7 +104,7 @@ class NordbayernBridge extends FeedExpander {
 		// Get categories
 		$categories = explode(',', $article->find('meta[name="Keywords"]', 0)->content);
 		$item['categories'] = array_map('trim', $categories);
-		
+
 		return $item;
 	}
 
@@ -179,7 +179,7 @@ class NordbayernBridge extends FeedExpander {
 		foreach ($articleContent->find('figure') as $index => $figure) {
 			$articleContent->find('figure', $index)->outertext = '';
 		}
-		
+
 		foreach ($articleContent->find('comment') as $index => $comment) {
 			$articleContent->find('comment', $index)->outertext = '';
 		}
