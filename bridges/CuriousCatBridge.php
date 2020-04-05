@@ -15,6 +15,19 @@ class CuriousCatBridge extends BridgeAbstract {
 
 	const CACHE_TIMEOUT = 3600;
 
+	private $detectParamsRegex = '/^https?:\/\/curiouscat.me\/([\w]+)$/';
+
+	public function detectParameters($url) {
+		$params = array();
+
+		if(preg_match($this->detectParamsRegex, $url, $matches) > 0) {
+			$params['username'] = $matches[1];
+			return $params;
+		}
+
+		return null;
+	}
+
 	public function collectData() {
 
 		$url = self::URI . '/api/v2/profile?username=' . urlencode($this->getInput('username'));
