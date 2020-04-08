@@ -16,8 +16,19 @@ class ScribdBridge extends BridgeAbstract {
 
 	const CACHE_TIMEOUT = 3600;
 
-	private $profileUrlRegex = '/scribd\.com\/(user\/[0-9]+\/[\w-]+)\/?/';
+	private $profileUrlRegex = '/https?:\/\/(?:[a-z]+\.)?scribd.com\/user\/([0-9]+\/[\w-]+)(?:\/uploads)?/';
 	private $feedName = '';
+
+	public function detectParameters($url) {
+		$params = array();
+
+		if(preg_match($this->profileUrlRegex, $url, $matches) > 0) {
+			$params['profile'] = $matches[0];
+			return $params;
+		}
+
+		return null;
+	}
 
 	public function collectData() {
 
@@ -75,7 +86,7 @@ EOD;
 			preg_match($this->profileUrlRegex, $this->getInput('profile'), $user)
 				or returnServerError('Could not extract user ID and name from given profile URL.');
 
-			return self::URI . '/' . $user[1] . '/uploads';
+			return self::URI . '/user/' . $user[1] . '/uploads';
 		}
 
 		return parent::getURI();
