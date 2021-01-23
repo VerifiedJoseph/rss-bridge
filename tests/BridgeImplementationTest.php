@@ -69,11 +69,11 @@ class BridgeImplementationTest extends TestCase {
 				$this->assertNotEmpty($context, 'empty context name');
 			}
 
-			foreach ($paramsSeen as $seen) {
-				if (empty($params)) {
-					continue;
-				}
+			if (empty($params)) {
+				continue;
+			}
 
+			foreach ($paramsSeen as $seen) {
 				$this->assertNotEquals($seen, $params, 'same set of parameters not allowed');
 			}
 			$paramsSeen[] = $params;
