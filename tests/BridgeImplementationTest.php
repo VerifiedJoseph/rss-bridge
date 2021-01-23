@@ -73,7 +73,7 @@ class BridgeImplementationTest extends TestCase {
 				if (empty($params)) {
 					continue;
 				}
-				
+
 				$this->assertNotEquals($seen, $params, 'same set of parameters not allowed');
 			}
 			$paramsSeen[] = $params;
