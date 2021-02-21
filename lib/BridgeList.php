@@ -140,6 +140,21 @@ EOD;
 	<input type="text" name="searchfield"
 		id="searchfield" placeholder="Insert URL or bridge name"
 		value="{$query}">
+</section>
+EOD;
+	}
+	
+	/**
+	 * Get the options box
+	 *
+	 * @return string The options box
+	 */
+	private static function getOptionBox() {
+		$query = filter_input(INPUT_GET, 'q');
+
+		return <<<EOD
+<section class="optionbox" style="display:none">
+	<h4>Options</h4>
 	<div class="extraoptions">
 		<label><input type="checkbox" id="extraoption-renderFeedUrl"> Show feed URL instead of redirecting</label>
 	</div>
@@ -212,6 +227,7 @@ EOD;
 		. '<body>'
 		. BridgeList::getHeader()
 		. BridgeList::getSearchbar()
+		. BridgeList::getOptionBox()
 		. BridgeList::getBridges($showInactive, $totalBridges, $totalActiveBridges)
 		. BridgeList::getFooter($totalBridges, $totalActiveBridges, $showInactive)
 		. BridgeList::getScripts()
