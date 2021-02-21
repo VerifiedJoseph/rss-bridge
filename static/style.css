@@ -89,9 +89,9 @@ input:focus::placeholder { opacity: 0; }
 input:focus:-moz-placeholder { opacity: 0; }
 input:focus:-ms-input-placeholder { opacity: 0; }
 
-.searchbar {
+.optionbox, .searchbar {
 	width: 40%;
-	margin: 40px auto 100px;
+	margin: 10px auto;
 }
 
 .searchbar input[type="text"] {
@@ -108,6 +108,13 @@ input:focus:-ms-input-placeholder { opacity: 0; }
 
 .searchbar > h3 {
 	font-size: 200%;
+	font-weight: bold;
+	color: #1182DB;
+	margin-bottom: 10px;
+}
+
+.optionbox > h4 {
+	font-size: 150%;
 	font-weight: bold;
 	color: #1182DB;
 	margin-bottom: 10px;
@@ -348,9 +355,9 @@ select {
 		width: 90%;
 	}
 
-	.searchbar {
+	.searchbar, .optionbox {
 		width: 90%;
-		margin: 0 auto;
+		margin: 10px auto;
 	}
 
 	section {
