@@ -64,6 +64,9 @@
 	}
 
 	function optionsInitializer () {
+		// Show options
+		d.querySelector('.optionbox').removeAttribute('style')
+
 		var renderFeedUrlToggler = d.getElementById('extraoption-renderFeedUrl')
 		renderFeedUrlInitializer(renderFeedUrlToggler)
 	}
