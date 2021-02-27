@@ -82,7 +82,7 @@ class BrutBridge extends BridgeAbstract {
 				break;
 			}
 		}
-		
+
 		$this->sortItemsByDate();
 	}
 
