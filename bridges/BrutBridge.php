@@ -43,7 +43,6 @@ class BrutBridge extends BridgeAbstract {
 	private $videoImage = '';
 
 	public function collectData() {
-
 		$html = getSimpleHTMLDOM($this->getURI())
 			or returnServerError('Could not request: ' . $this->getURI());
 
@@ -83,6 +82,8 @@ class BrutBridge extends BridgeAbstract {
 				break;
 			}
 		}
+		
+		$this->sortItemsByDate();
 	}
 
 	public function getURI() {
@@ -155,5 +156,13 @@ class BrutBridge extends BridgeAbstract {
 
 		$this->videoId = implode('-', array_splice($parts, -6, 5));
 		$this->videoType = end($parts);
+	}
+
+	private function sortItemsByDate() {
+		foreach ($this->items as $key => $item) {
+			$sort[$key] = $item['timestamp'];
+		}
+
+		array_multisort($sort, SORT_DESC, $this->items);
 	}
 }
