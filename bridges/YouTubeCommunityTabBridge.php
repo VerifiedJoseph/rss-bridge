@@ -4,7 +4,7 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
 {
     const NAME = 'YouTube Community Tab Bridge';
     const URI = 'https://www.youtube.com';
-    const DESCRIPTION = 'Returns posts from a channel\'s community tab';
+    const DESCRIPTION = 'Returns posts from a channel\'s community/posts tab';
     const MAINTAINER = 'VerifiedJoseph';
     const PARAMETERS = [
         'By channel ID' => [
@@ -31,7 +31,7 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
     private $feedName = '';
     private $itemTitle = '';
 
-    private $urlRegex = '/youtube\.com\/(channel|user|c)\/([\w]+)\/community/';
+    private $urlRegex = '/youtube\.com\/(?:(?:channel|user|c)\/([\w]+)|@([\w]+))\/(?:community|posts)/';
     private $jsonRegex = '/var ytInitialData = ([^<]*);<\/script>/';
 
     public function detectParameters($url)
@@ -58,12 +58,18 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
     public function collectData()
     {
         if (is_null($this->getInput('username')) === false) {
-            try {
-                $this->feedUrl = $this->buildCommunityUri($this->getInput('username'), 'c');
+            if (str_starts_with($this->getInput('username'), '@') === true) {
+                $this->feedUrl = $this->buildCommunityUri($this->getInput('username'));
                 $html = getSimpleHTMLDOM($this->feedUrl);
-            } catch (Exception $e) {
-                $this->feedUrl = $this->buildCommunityUri($this->getInput('username'), 'user');
-                $html = getSimpleHTMLDOM($this->feedUrl);
+
+            } else {
+                try {
+                    $this->feedUrl = $this->buildCommunityUri($this->getInput('username'), 'c');
+                    $html = getSimpleHTMLDOM($this->feedUrl);
+                } catch (Exception $e) {
+                    $this->feedUrl = $this->buildCommunityUri($this->getInput('username'), 'user');
+                    $html = getSimpleHTMLDOM($this->feedUrl);
+                }
             }
         } else {
             $this->feedUrl = $this->buildCommunityUri($this->getInput('channel'), 'channel');
@@ -72,10 +78,10 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
 
         $json = $this->extractJson($html->find('html', 0)->innertext);
 
-        $this->feedName = $json->header->c4TabbedHeaderRenderer->title;
+        $this->feedName = $json->header->pageHeaderRenderer->pageTitle;
 
         if ($this->hasCommunityTab($json) === false) {
-            returnServerError('Channel does not have a community tab');
+            returnServerError('Channel does not have a community/posts tab');
         }
 
         $posts = $this->getCommunityPosts($json);
@@ -141,8 +147,12 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
     /**
      * Build Community URI
      */
-    private function buildCommunityUri($value, $type)
+    private function buildCommunityUri($value, $type = null)
     {
+        if ($type === null) {
+            return self::URI . '/' . $value . '/posts';
+        }
+
         return self::URI . '/' . $type . '/' . $value . '/community';
     }
 
@@ -172,7 +182,7 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
         foreach ($json->contents->twoColumnBrowseResultsRenderer->tabs as $tab) {
             if (
                 isset($tab->tabRenderer)
-                && str_ends_with($tab->tabRenderer->endpoint->commandMetadata->webCommandMetadata->url, 'community')
+                && str_ends_with($tab->tabRenderer->endpoint->commandMetadata->webCommandMetadata->url, 'posts')
             ) {
                 return true;
             }
@@ -189,7 +199,7 @@ class YouTubeCommunityTabBridge extends BridgeAbstract
         foreach ($json->contents->twoColumnBrowseResultsRenderer->tabs as $tab) {
             if (
                 isset($tab->tabRenderer)
-                && str_ends_with($tab->tabRenderer->endpoint->commandMetadata->webCommandMetadata->url, 'community')
+                && str_ends_with($tab->tabRenderer->endpoint->commandMetadata->webCommandMetadata->url, 'posts')
             ) {
                 return $tab->tabRenderer->content->sectionListRenderer->contents[0]->itemSectionRenderer->contents;
             }
